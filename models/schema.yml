@@ -31,13 +31,27 @@ models:
           - not_null
 
   - name: stg_stripe_payments
-    description: Stripe payments. One row per payment
+    description: Stripe payments. One row per payment. However, there may be multiple payments for a single order_id.
     columns:
       - name: stripe_payment_id
         description: Primary key
         tests:
           - unique
           - not_null
+      - name: order_id
+        description: There might be multiple payments for the same order
+      - name: payment_method
+        description: "{{ doc('payment_method') }}"
+        tests:
+          - accepted_values:
+                  values: ['credit_card', 'coupon', 'bank_transfer', 'gift_card']
+      - name: payment_status
+        description: Either success or fail
+        tests:
+        - accepted_values:
+                values: ['success', 'fail']
+      - name: amount
+      - name: created_date
 
   - name: stg_orders
     description: This model cleans up order data
